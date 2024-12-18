@@ -5,9 +5,9 @@ import sys
 if len(sys.argv) != 2:
     print(f"Usage: {sys.argv[0]} <image>")
     exit(-1)
-
-model = ViTForImageClassification.from_pretrained('google/vit-base-patch16-224-in21k', num_labels=120)
-model.load_state_dict(torch.load('model.pth', weights_only=True))
+model = ViTForImageClassification.from_pretrained("WillyIde545/dog_classifier")
+# model = ViTForImageClassification.from_pretrained('google/vit-base-patch16-224-in21k', num_labels=120)
+# model.load_state_dict(torch.load('model.pth', weights_only=True))
 model.eval()
 
 from PIL import Image
