@@ -25,7 +25,6 @@ def get_normalization(model_type: str, hf_model_name: str = DEFAULT_VIT_MODEL_NA
     
 class DogBreedClassifier(nn.Module):
     def __init__(
-        
         self,
         model_type: str,
         num_classes: int,

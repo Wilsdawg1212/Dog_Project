@@ -15,7 +15,7 @@ class HFDogsDataset(Dataset):
 
     def __getitem__(self, idx):
         item = self.data[idx]
-        image = item["image"]             # PIL Image already
+        image = item["pixel_values"]             # PIL Image already
         label = item["label"]             # integer label
 
         if self.transform:
