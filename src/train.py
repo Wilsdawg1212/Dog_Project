@@ -8,6 +8,7 @@ from datasets import load_dataset
 from src.data import create_dataloaders
 from src.model import build_model, DogBreedClassifier
 
+
 def train_one_epoch(model, dataloader, criterion, optimizer, device):
     model.train()
     running_loss = 0.0
@@ -62,6 +63,7 @@ def eval_one_epoch(model, dataloader, criterion, device):
 def main(
     dataset: Dataset,
     model: DogBreedClassifier,
+    save_path: str,
     model_type: str = "resnet",
     batch_size: int = 64,
     img_size: int = 224,
@@ -106,7 +108,7 @@ def main(
             "epoch": epoch,
             "model_state": model.state_dict(),
             "optimizer_state": optimizer.state_dict(),
-        }, "checkpoint.pth")
+        }, {save_path})
         print("Model saved!")
 
 if __name__ == "__main__":
