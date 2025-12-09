@@ -73,6 +73,7 @@ def main(
 ):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("Using device:", device)
+    model = model.to(device)
 
     num_classes = dataset["train"].features["label"].num_classes
 
