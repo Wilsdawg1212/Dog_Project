@@ -118,7 +118,7 @@ def main(
             "epoch": epoch,
             "model_state": model.state_dict(),
             "optimizer_state": optimizer.state_dict(),
-        }, {save_path})
+        }, save_path)
         print("Model saved!")
 
 if __name__ == "__main__":
