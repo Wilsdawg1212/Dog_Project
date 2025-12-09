@@ -23,8 +23,9 @@ def get_normalization(model_type: str, hf_model_name: str = DEFAULT_VIT_MODEL_NA
     else:
         raise ValueError("Unknown model_type. Use 'resnet' or 'vit'.")
     
-class DogBreedClassifier:
+class DogBreedClassifier(nn.Module):
     def __init__(
+        
         self,
         model_type: str,
         num_classes: int,
