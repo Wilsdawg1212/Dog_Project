@@ -15,7 +15,7 @@ def train_one_epoch(model, dataloader, criterion, optimizer, device):
     correct = 0
     total = 0
 
-    for images, labels in dataloader:
+    for batch_idx, (images, labels) in enumerate(dataloader):
         images = images.to(device)
         labels = labels.to(device)
 
@@ -24,11 +24,20 @@ def train_one_epoch(model, dataloader, criterion, optimizer, device):
         logits = model(images)
         loss = criterion(logits, labels)
 
+        loss.backward()
+        optimizer.step()
+
         running_loss += loss.item() * images.size(0)
         preds = logits.argmax(dim=1)
         correct += (preds == labels).sum().item()
 
         total += labels.size(0)
+
+        if batch_idx % 20 == 0:
+            print(
+                f"Batch {batch_idx}/{len(dataloader)} | "
+                f"Loss: {loss.item():.4f}"
+            )
 
     epoch_loss = running_loss / total
     epoch_acc = correct / total
