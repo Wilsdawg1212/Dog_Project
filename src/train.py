@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 from torch.optim import AdamW
 from torch.utils.data import Dataset, DataLoader
+import json
+import os
 
 
 from datasets import load_dataset
@@ -79,6 +81,8 @@ def main(
     num_epochs: int = 5,
     lr: float = 1e-4,
     freeze_base: bool = False,
+    history_path: str = None,
+    resume: bool = False,
 ):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("Using device:", device)
@@ -99,6 +103,29 @@ def main(
     criterion = nn.CrossEntropyLoss(label_smoothing=0.1)
     optimizer = AdamW(filter(lambda p: p.requires_grad, model.parameters()), lr=lr)
 
+    start_epoch = 1
+    history = {
+        "epoch": [],
+        "train_loss": [],
+        "train_acc": [],
+        "val_loss": [],
+        "val_acc": [],
+    }
+
+    if resume and os.path.exists(save_path):
+        print(f"Resuming from checkpoint: {save_path}")
+        ckpt = torch.load(save_path, map_location=device)
+
+        model.load_state_dict(ckpt["model_state"])
+        optimizer.load_state_dict(ckpt["optimizer_state"])
+
+        if "history" in ckpt:
+            history = ckpt["history"]
+        if "epoch" in ckpt:
+            start_epoch = ckpt["epoch"] + 1
+
+        print(f"Starting from epoch {start_epoch}")
+
     # ----- Training Loop -----
     for epoch in range(1, num_epochs + 1):
         train_loss, train_acc = train_one_epoch(
@@ -114,12 +141,30 @@ def main(
             f"| val_loss={val_loss:.4f}, val_acc={val_acc:.4f}"
         )
 
+        # ---- update history ----
+        history["epoch"].append(epoch)
+        history["train_loss"].append(train_loss)
+        history["train_acc"].append(train_acc)
+        history["val_loss"].append(val_loss)
+        history["val_acc"].append(val_acc)
+
+
         torch.save({
             "epoch": epoch,
             "model_state": model.state_dict(),
             "optimizer_state": optimizer.state_dict(),
+            "history": history,
         }, save_path)
         print("Model saved!")
+
+    if history_path is not None:
+        # make sure directory exists
+        os.makedirs(os.path.dirname(history_path), exist_ok=True)
+        with open(history_path, "w") as f:
+            json.dump(history, f)
+        print("Training history saved to:", history_path)
+
+    return history
 
 if __name__ == "__main__":
     main()
