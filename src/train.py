@@ -159,7 +159,7 @@ def main(
             "model_state": model.state_dict(),
             "optimizer_state": optimizer.state_dict(),
             "history": history,
-        }, save_path)
+        }, f"{save_path}{total_epoch}.pth")
         print("Model saved!")
 
     if history_path is not None:
