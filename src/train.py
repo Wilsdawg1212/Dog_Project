@@ -124,10 +124,14 @@ def main(
         if "epoch" in ckpt:
             start_epoch = history["epoch"][-1] + 1
 
-        print(f"Starting from epoch {start_epoch}")
+    print(f"Starting from epoch {start_epoch}")
+
+    if start_epoch > num_epochs:
+        print(f"start_epoch ({start_epoch}) > num_epochs ({num_epochs}), nothing to do.")
+        return history
 
     # ----- Training Loop -----
-    for epoch in range(1, num_epochs + 1):
+    for epoch in range(start_epoch, num_epochs + 1):
         train_loss, train_acc = train_one_epoch(
             model, train_loader, criterion, optimizer, device
         )
@@ -141,13 +145,10 @@ def main(
             f"| val_loss={val_loss:.4f}, val_acc={val_acc:.4f}"
         )
 
-        if len(history["epoch"]) > 0:
-            total_epoch = epoch + history["epoch"][-1]
-        else:
-            total_epoch = epoch
+
 
         # ---- update history ----
-        history["epoch"].append(total_epoch)
+        history["epoch"].append(epoch)
         history["train_loss"].append(train_loss)
         history["train_acc"].append(train_acc)
         history["val_loss"].append(val_loss)
@@ -155,11 +156,11 @@ def main(
 
 
         torch.save({
-            "epoch": total_epoch,
+            "epoch": epoch,
             "model_state": model.state_dict(),
             "optimizer_state": optimizer.state_dict(),
             "history": history,
-        }, f"{save_path}{total_epoch}.pth")
+        }, f"{save_path}{epoch}.pth")
         print("Model saved!")
 
     if history_path is not None:
