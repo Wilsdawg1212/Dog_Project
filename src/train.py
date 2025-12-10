@@ -122,7 +122,7 @@ def main(
         if "history" in ckpt:
             history = ckpt["history"]
         if "epoch" in ckpt:
-            start_epoch = ckpt["epoch"][-1] + 1
+            start_epoch = history["epoch"][-1] + 1
 
         print(f"Starting from epoch {start_epoch}")
 
