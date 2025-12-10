@@ -122,7 +122,7 @@ def main(
         if "history" in ckpt:
             history = ckpt["history"]
         if "epoch" in ckpt:
-            start_epoch = ckpt["epoch"] + 1
+            start_epoch = ckpt["epoch"][-1] + 1
 
         print(f"Starting from epoch {start_epoch}")
 
@@ -141,8 +141,13 @@ def main(
             f"| val_loss={val_loss:.4f}, val_acc={val_acc:.4f}"
         )
 
+        if len(history["epoch"]) > 0:
+            total_epoch = epoch + history["epoch"][-1]
+        else:
+            total_epoch = epoch
+
         # ---- update history ----
-        history["epoch"].append(epoch)
+        history["epoch"].append(total_epoch)
         history["train_loss"].append(train_loss)
         history["train_acc"].append(train_acc)
         history["val_loss"].append(val_loss)
@@ -150,7 +155,7 @@ def main(
 
 
         torch.save({
-            "epoch": epoch,
+            "epoch": total_epoch,
             "model_state": model.state_dict(),
             "optimizer_state": optimizer.state_dict(),
             "history": history,
