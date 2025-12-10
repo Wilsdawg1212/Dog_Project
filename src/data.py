@@ -2,7 +2,7 @@ from torchvision import datasets, transforms
 from torchvision.transforms import Compose, Resize, ToTensor
 from torch.utils.data import Dataset, DataLoader, random_split
 import torch
-from model import get_normalization
+from .model import get_normalization
 
 
 class HFDogsDataset(Dataset):

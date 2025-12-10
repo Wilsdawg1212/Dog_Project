@@ -7,8 +7,8 @@ import os
 
 
 from datasets import load_dataset
-from src.data import create_dataloaders
-from src.model import build_model, DogBreedClassifier
+from .data import create_dataloaders
+from .model import build_model, DogBreedClassifier
 
 
 def train_one_epoch(model, dataloader, criterion, optimizer, device):
